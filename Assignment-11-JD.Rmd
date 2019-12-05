@@ -47,18 +47,11 @@ plot(PersonOccurCount, col = rainbow(30),
 ```
 
 ```{r}
-#Remove employees without 128 paychecks
-raw128 <- raw2[which(counts$Freq != 128), ]
- 
 #Remove time stamp of date
-raw128$Check.Dt <- gsub(" 12:00:00 AM", "", raw128$Check.Dt)
+raw2$Check.Dt <- gsub(" 12:00:00 AM", "", raw2$Check.Dt)
 
 #Remove 'U' Sex
-raw.sex <- filter(raw128, raw128$Sex != 'U')
-```
-
-```{r}
-
+raw.sex <- filter(raw2, raw2$Sex != 'U')
 ```
 
 
