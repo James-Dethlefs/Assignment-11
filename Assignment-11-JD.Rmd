@@ -19,3 +19,60 @@ download.file("https://sdsu.box.com/shared/static/neaac6yoqx9e9x4j8391lzozzy1949
 system("unzip salary.zip")
 ```
 
+###Import Data
+```{r}
+raw0 <- read.csv(file = "State_Employee_Payroll_Data_Calendar_Year_2015_through_Present.tsv", sep = "\t", header = TRUE)
+
+```
+
+###Data Wrangling
+```{r, echo=FALSE}
+library(dplyr)
+```
+
+
+```{r}
+employID <- unique(raw0$EmplId.Empl.Rcd)
+
+# pick full time employee
+raw1 <- filter(raw0, Full.Part == "F")  
+# keep only the interested variables
+raw2 <- raw1[, -c(1:2, 5:9, 11:12, 19:23, 31:33, 35:36)] 
+
+EmplId.Empl.Rcd <- as.character(raw2$EmplId.Empl.Rcd)
+counts <- data.frame(table(EmplId.Empl.Rcd))
+PersonOccurCount <- table(counts[, 2])
+plot(PersonOccurCount, col = rainbow(30), 
+     xlab = "Occurance of employee", ylab = "Count of employee")
+```
+
+```{r}
+#Remove employees without 128 paychecks
+raw128 <- raw2[which(counts$Freq != 128), ]
+ 
+#Remove time stamp of date
+raw128$Check.Dt <- gsub(" 12:00:00 AM", "", raw128$Check.Dt)
+
+#Remove 'U' Sex
+raw.sex <- filter(raw128, raw128$Sex != 'U')
+```
+
+```{r}
+
+```
+
+
+
+#Figure 1
+Distribution of sex 
+```{r}
+library(ggplot2)
+
+
+ggplot(raw.sex, aes(x=raw.sex$Sex, fill = raw.sex$Ethnic.Grp)) +
+  labs(x = "Gender", y ="Frequency of Gender", fill = "Ethnic Group") +
+  geom_bar()
+      
+
+```
+
