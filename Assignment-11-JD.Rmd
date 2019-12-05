@@ -9,16 +9,6 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r, echo=FALSE}
-#Download Data
-
-options(timeout=100000)
-
-download.file("https://sdsu.box.com/shared/static/neaac6yoqx9e9x4j8391lzozzy1949p7.zip", destfile = "salary.zip")
-
-system("unzip salary.zip")
-```
-
 ###Import Data
 ```{r}
 raw0 <- read.csv(file = "State_Employee_Payroll_Data_Calendar_Year_2015_through_Present.tsv", sep = "\t", header = TRUE)
@@ -37,7 +27,7 @@ employID <- unique(raw0$EmplId.Empl.Rcd)
 # pick full time employee
 raw1 <- filter(raw0, Full.Part == "F")  
 # keep only the interested variables
-raw2 <- raw1[, -c(1:2, 5:9, 11:12, 19:23, 31:33, 35:36)] 
+raw2 <- raw1[, -c(1, 5:9, 11:12, 19:23, 31:33, 35:36)] 
 
 EmplId.Empl.Rcd <- as.character(raw2$EmplId.Empl.Rcd)
 counts <- data.frame(table(EmplId.Empl.Rcd))
@@ -60,12 +50,40 @@ raw.sex <- filter(raw2, raw2$Sex != 'U')
 Distribution of sex 
 ```{r}
 library(ggplot2)
-
+library(scales)
 
 ggplot(raw.sex, aes(x=raw.sex$Sex, fill = raw.sex$Ethnic.Grp)) +
   labs(x = "Gender", y ="Frequency of Gender", fill = "Ethnic Group") +
-  geom_bar()
+  geom_bar() + 
+  scale_y_continuous(labels = number_format(decimal.mark = ",")) 
       
 
+```
+
+We can see that there are more men in the data than women. There are also more people that identify as white than any other ethnicity. Black's are then next highest ethnicity. The largest subgroup looks to be white females.
+
+#Figure 2
+Distribution of Income
+```{r}
+
+annual.sum <- sum(raw.sex$Annual.Rate)
+
+
+ggplot(raw.sex, aes(x = raw.sex$Check.Dt, y = raw.sex$Annnual.Rate, fill = raw.sex$Sex)) + 
+  labs(x = "Date", y = "Annual Rate", fill = "Gender") +
+  geom_line() +
+  facet_grid(raw.sex$Calendar.Year) 
+
+```
+
+Although the plots are hard to read and get specific's from, but we can see that the annual rate has decreasedas the years have gone on. We also see some seasonality in each year
+
+
+#Figure 3
+```{r}
+
+race.sum <- aggregate(data = raw.sex, raw.sex$Annnual.Rate ~ raw.sex$Ethnic.Grp, sum)
+
+barplot(race.sum[,2], xlab = "Ethnic Group", ylab = "Sum of each Ethinic Group", names.arg= race.sum[,1], las = 2)
 ```
 
