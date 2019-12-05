@@ -1,0 +1,21 @@
+---
+title: "Assignment 11"
+author: "James Dethlefs"
+date: "12/4/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE}
+#Download Data
+
+options(timeout=100000)
+
+download.file("https://sdsu.box.com/shared/static/neaac6yoqx9e9x4j8391lzozzy1949p7.zip", destfile = "salary.zip")
+
+system("unzip salary.zip")
+```
+
